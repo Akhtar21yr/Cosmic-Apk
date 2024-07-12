@@ -3,6 +3,7 @@ import { View, FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import WeekSlider from './weekSlider';
 
 
 interface TabItem {
@@ -10,16 +11,17 @@ interface TabItem {
   title: string;
 }
 
-const HomePage: React.FC = () => {
+const DashBoard: React.FC = () => {
   const navigation = useNavigation();
 
-  if  !AsyncStorage.getItem('sessionData') {
+  if  (!AsyncStorage.getItem('sessionData')) {
     navigation.navigate('Login');
   }
 
   const data: TabItem[] = [
-    { key: 'TYPES OF INCOME', title: 'TYPES OF INCOME' },
-    { key: 'ARB CL', title: 'ARB CL' },
+    { key: 'SOURCE OF INCOME', title: 'SOURCE OF INCOME' },
+    { key: 'ARB MTM CLIENT', title: 'ARB MTM CLIENT' },
+    { key: 'BALANCES', title: 'BALANCES' },
     { key: 'BOOK', title: 'BOOK' },
   ];
 
@@ -68,4 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage;
+export default DashBoard;

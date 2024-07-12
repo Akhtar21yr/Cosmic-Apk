@@ -47,7 +47,7 @@ const ArbScreen: React.FC = () => {
         const total = {}
 
         data.QUERY_ARB_TOTAL_DATA.forEach(({e}: {e:any}) => {
-            7
+            
         })
 
 
@@ -70,13 +70,13 @@ const ArbScreen: React.FC = () => {
     const isEven = (index%2 ===0);
     return (
       <View style={[styles.row, isEven? styles.evencell :null]}>
-        <Text style={[styles.cell]}>{item.Userid}</Text>
-        <Text style={[styles.cell]}>{formatInt(item.NetMTM_USD)}</Text>
+        <Text style={[styles.cell]}>{item.userid}</Text>
+        <Text style={[styles.cell]}>{formatInt(item.netmtm_usd)}</Text>
         <Text style={[styles.cell, {paddingLeft: '2%'}]}>
-          {formatInt(item.INRMTM)}
+          {formatInt(item.inrmtm)}
         </Text>
         <Text style={[styles.cell, {paddingLeft: '3%'}]}>
-          {formatInt(item.ARB)}
+          {formatInt(item.arb)}
         </Text>
         
       </View>
@@ -91,6 +91,7 @@ const ArbScreen: React.FC = () => {
       </LinearGradient>
     );
   }
+  // { console.log({data})}
 
   return (
     <LinearGradient colors={['#780206', '#061161']} style={styles.container}>
@@ -107,7 +108,10 @@ const ArbScreen: React.FC = () => {
           </Text>
         </View>
         {data ? (
+         
+          
           <FlatList
+          
             data={data.slice(1)} // Remove the header row from data
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}

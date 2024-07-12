@@ -11,6 +11,7 @@ function ArbScreen() : React.JSX.Element  {
   const navigation = useNavigation();
   const data: TabItem[] = [
     { key: 'ARB NET TOTAL', title: 'ARB Net Total' },
+    { key: 'GRP USD', title: 'GRP USD' },
   ];
 
   const handleTabPress = (key: string) => {
