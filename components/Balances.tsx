@@ -16,9 +16,7 @@ import Animated, {
 
 const formatInt = (num: any) => {
   if (isNaN(num)) return num;
-  return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 20 }).format(
-    num,
-  );
+  return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 20 }).format(num);
 };
 
 const Balances: React.FC = () => {
@@ -35,13 +33,11 @@ const Balances: React.FC = () => {
     fetch('https://www.cosmicrms.com/api/ld-lf/balance')
       .then(response => response.json())
       .then(data => {
-        // Set columns dynamically based on data keys
+        console.log("response");
+        
         const keys = Object.keys(data[0] || {});
         setColumns(keys);
-
-        // Set data with the fetched data
-        setData(data.reverse());
-
+        setData(data);
         setLoading(false);
       })
       .catch(error => {
@@ -50,32 +46,19 @@ const Balances: React.FC = () => {
       });
   }, []);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-    };
-  });
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
-  const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const isEven = index % 2 === 0;
-    return (
-      <View style={styles.rowContainer}>
-        <View style={[styles.stickyCell, isEven ? styles.evenCell : null]}>
-          <Text style={styles.cellText}>{item[columns[0]]}</Text>
+  const renderItem = ({ item }: { item: any }) => (
+    <View style={styles.rowContainer}>
+      {columns.map((column, colIndex) => (
+        <View key={colIndex} style={styles.cell}>
+          <Text style={styles.cellText}>{colIndex === 0 ? item[column] : formatInt(item[column])}</Text>
         </View>
-        <ScrollView horizontal  style={{  backgroundColor: 'red' }} >
-          {columns.slice(1).map((column, colIndex) => (
-            <View key={colIndex} style={styles.row}>
-
-              <View  style={styles.cell}>
-                <Text style={styles.cellText}>{formatInt(item[column])}</Text>
-              </View>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-    );
-  };
+      ))}
+    </View>
+  );
 
   if (loading) {
     return (
@@ -88,28 +71,24 @@ const Balances: React.FC = () => {
   return (
     <LinearGradient colors={['#780206', '#061161']} style={styles.container}>
       <Animated.View style={[styles.innerContainer, animatedStyle]}>
-        <Text style={styles.title}>Arb Income</Text>
-        <View style={styles.headerContainer}>
-          <View style={[styles.stickyCell, styles.headerCell]}>
-            <Text style={styles.headerText}>{columns[0]}</Text>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-
-            {columns.slice(1).map((column, index) => (
-              <View key={index} style={styles.row}>
-                <View  style={styles.cell}>
-                  <Text style={styles.headerText}>{column}</Text>
+        {/* <Text style={styles.title}>Balance</Text> */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View>
+            <View style={styles.headerContainer}>
+              {columns.map((column, index) => (
+                <View key={index} style={styles.headerCell}>
+                  <Text style={styles.headerText}>{column.toUpperCase()}</Text>
                 </View>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.table}
-        />
+              ))}
+            </View>
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+              scrollEnabled={true} // Disable FlatList scrolling
+            />
+          </View>
+        </ScrollView>
       </Animated.View>
     </LinearGradient>
   );
@@ -120,9 +99,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  evenCell: {
-    backgroundColor: '#fcfcfc',
   },
   innerContainer: {
     width: '95%',
@@ -139,49 +115,32 @@ const styles = StyleSheet.create({
     color: 'black',
     marginBottom: 20,
   },
-  table: {
-    flexGrow: 1,
-    width: '100%',
+  headerContainer: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'black',
   },
   rowContainer: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#dde2eb',
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    flex: 1,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-  },
   cell: {
+    width: 100,  // Set a fixed width for consistency
     fontSize: 13,
     color: 'black',
-    minWidth: 100,
     textAlign: 'center',
     paddingVertical: 10,
     paddingHorizontal: 5,
     borderRightWidth: 1,
     borderRightColor: '#dde2eb',
   },
-  stickyCell: {
-    minWidth: 100,
-    backgroundColor: '#f9f9f9',
-    zIndex: 1,
-    borderRightWidth: 1,
-    borderRightColor: '#dde2eb',
-  },
   headerCell: {
+    width: 100,  // Set the same fixed width as body cells
     borderBottomWidth: 1,
     borderBottomColor: 'black',
     paddingVertical: 10,
     paddingHorizontal: 5,
-    minWidth: 100,
     alignItems: 'center',
   },
   cellText: {
@@ -190,11 +149,6 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  text: {
-    fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
   },
